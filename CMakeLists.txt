@@ -37,7 +37,15 @@ add_custom_target(
 )
 #########################################################################
 
-set(SOURCES src/main.cpp src/lve_window.hpp src/lve_window.cpp src/first_app.cpp src/first_app.hpp src/lve_pipeline.hpp src/lve_pipeline.cpp)
+set(SOURCES src/main.cpp
+        src/lve_window.hpp
+        src/lve_window.cpp
+        src/first_app.cpp
+        src/first_app.hpp
+        src/lve_pipeline.hpp
+        src/lve_pipeline.cpp
+        src/lve_device.hpp
+        src/lve_device.cpp)
 
 add_executable(${PROJECT_NAME} ${SOURCES})
 
