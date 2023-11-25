@@ -33,9 +33,11 @@ file(GLOB GLSL_SOURCE_FILES
 # TODO: Build file and copy them automatically to build directory instead of shaders
 ###
 foreach (GLSL_FILE ${GLSL_SOURCE_FILES})
-    set(SPIRV "${GLSL_FILE}.spv")
+    get_filename_component(FILE_NAME ${GLSL_FILE} NAME)
+    set(SPIRV "${PROJECT_BINARY_DIR}/shaders/${FILE_NAME}.spv")
     add_custom_command(
             OUTPUT ${SPIRV}
+            COMMAND ${CMAKE_COMMAND} -E make_directory "${PROJECT_BINARY_DIR}/shaders/"
             COMMAND ${glslangValid} -V "${GLSL_FILE}" -o ${SPIRV}
             MAIN_DEPENDENCY ${GLSL_FILE})
     list(APPEND SPIRV_BINARY_FILES ${SPIRV})
@@ -55,10 +57,18 @@ set(SOURCES src/main.cpp
         src/lve_window.hpp
         src/lve_window.cpp
         src/first_app.hpp
-        src/first_app.cpp)
+        src/first_app.cpp
+        src/lve_pipeline.hpp
+        src/lve_pipeline.cpp
+        src/lve_device.hpp
+        src/lve_device.cpp
+)
+
 
 add_executable(${PROJECT_NAME} ${SOURCES})
 
 target_link_libraries(${PROJECT_NAME} Vulkan::Vulkan glfw)
+
+add_dependencies(${PROJECT_NAME} Shaders)
 #########################################################################
 

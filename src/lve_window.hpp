@@ -1,6 +1,3 @@
-//
-// Created by llaczko on 25/11/23.
-//
 #pragma once
 
 #define GLFW_INCLUDE_VULKAN
@@ -19,6 +16,8 @@ namespace lve {
         LveWindow &operator=(const LveWindow &) = delete;
 
         bool shouldClose() { return glfwWindowShouldClose(window); };
+
+        void createWindowSurface(VkInstance instance, VkSurfaceKHR *surface);
 
     private:
         void initWindow();
