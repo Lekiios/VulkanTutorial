@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.22)
+cmake_minimum_required(VERSION 3.25)
 project(VulkanTutorial)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -51,7 +51,11 @@ add_custom_target(
 #########################################################################
 
 ########################### BUILD APP ###################################
-set(SOURCES src/main.cpp)
+set(SOURCES src/main.cpp
+        src/lve_window.hpp
+        src/lve_window.cpp
+        src/first_app.hpp
+        src/first_app.cpp)
 
 add_executable(${PROJECT_NAME} ${SOURCES})
 
