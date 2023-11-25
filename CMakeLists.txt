@@ -1,7 +1,7 @@
-cmake_minimum_required(VERSION 3.25)
+cmake_minimum_required(VERSION 3.22)
 project(VulkanTutorial)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 ######################## REQUIRED PACKAGES ##############################
 find_package(Vulkan REQUIRED)
@@ -51,15 +51,7 @@ add_custom_target(
 #########################################################################
 
 ########################### BUILD APP ###################################
-set(SOURCES src/main.cpp
-        src/lve_window.hpp
-        src/lve_window.cpp
-        src/first_app.cpp
-        src/first_app.hpp
-        src/lve_pipeline.hpp
-        src/lve_pipeline.cpp
-        src/lve_device.hpp
-        src/lve_device.cpp)
+set(SOURCES src/main.cpp)
 
 add_executable(${PROJECT_NAME} ${SOURCES})
 
