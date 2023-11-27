@@ -5,7 +5,8 @@
 
 namespace lve {
 
-    FirstApp::FirstApp(){
+    FirstApp::FirstApp() {
+        loadModels();
         createPipelineLayout();
         createPipeline();
         createCommandBuffers();
@@ -21,6 +22,29 @@ namespace lve {
             drawFrame();
         }
         vkDeviceWaitIdle((lveDevice.device()));
+    }
+
+    void FirstApp::sierpinski(std::vector<LveModel::Vertex> &vertices, int depth, glm::vec2 top,
+                              glm::vec2 right, glm::vec2 left) {
+        if (depth <= 0) {
+            vertices.push_back({top});
+            vertices.push_back({right});
+            vertices.push_back({left});
+        } else {
+            auto mRight = 0.5f * (right + top);
+            auto mLeft = 0.5f * (left + top);
+            auto mBottom = 0.5f * (left + right);
+            sierpinski(vertices, depth - 1, top, mRight, mLeft);
+            sierpinski(vertices, depth - 1, mRight, right, mBottom);
+            sierpinski(vertices, depth - 1, mLeft, mBottom, left);
+        }
+
+    }
+
+    void FirstApp::loadModels() {
+        std::vector<LveModel::Vertex> vertices{};
+        sierpinski(vertices, 7, {0.8f, -0.6f},{0.9f,  0.7f}, {-0.9f, 0.6f});
+        lveModel = std::make_unique<LveModel>(lveDevice, vertices);
     }
 
     void FirstApp::createPipelineLayout() {
@@ -63,15 +87,15 @@ namespace lve {
         allocInfo.commandPool = lveDevice.getCommandPool();
         allocInfo.commandBufferCount = static_cast<uint32_t>(commandBuffers.size());
 
-        if(vkAllocateCommandBuffers(lveDevice.device(), &allocInfo, commandBuffers.data()) != VK_SUCCESS){
+        if (vkAllocateCommandBuffers(lveDevice.device(), &allocInfo, commandBuffers.data()) != VK_SUCCESS) {
             throw std::runtime_error("Failed to allocate command buffers !");
         }
 
-        for(int i = 0; i < commandBuffers.size(); i++){
+        for (int i = 0; i < commandBuffers.size(); i++) {
             VkCommandBufferBeginInfo beginInfo{};
             beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 
-            if(vkBeginCommandBuffer(commandBuffers[i], &beginInfo) != VK_SUCCESS){
+            if (vkBeginCommandBuffer(commandBuffers[i], &beginInfo) != VK_SUCCESS) {
                 throw std::runtime_error("Failed to begin recording command buffers !");
             }
 
@@ -92,10 +116,11 @@ namespace lve {
             vkCmdBeginRenderPass(commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
             lvePipeline->bind(commandBuffers[i]);
-            vkCmdDraw(commandBuffers[i], 3, 1, 0, 0);
+            lveModel->bind(commandBuffers[i]);
+            lveModel->draw(commandBuffers[i]);
 
             vkCmdEndRenderPass(commandBuffers[i]);
-            if(vkEndCommandBuffer((commandBuffers[i])) != VK_SUCCESS){
+            if (vkEndCommandBuffer((commandBuffers[i])) != VK_SUCCESS) {
                 throw std::runtime_error("Failed to record command buffers !");
             }
         }
@@ -104,11 +129,11 @@ namespace lve {
     void FirstApp::drawFrame() {
         uint32_t imageIndex;
         auto result = lveSwapChain.acquireNextImage(&imageIndex);
-        if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR){
+        if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
             throw std::runtime_error("Failed to acquire swap chain image !");
         }
         result = lveSwapChain.submitCommandBuffers(&commandBuffers[imageIndex], &imageIndex);
-        if (result != VK_SUCCESS ){
+        if (result != VK_SUCCESS) {
             throw std::runtime_error("Failed to present swap chain image !");
         }
     }

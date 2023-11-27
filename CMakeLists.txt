@@ -64,6 +64,8 @@ set(SOURCES src/main.cpp
         src/lve_device.cpp
         src/lve_swap_chain.hpp
         src/lve_swap_chain.cpp
+        src/lve_model.hpp
+        src/lve_model.cpp
 )
 
 
